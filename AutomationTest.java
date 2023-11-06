@@ -128,7 +128,7 @@ public class WebAutomation {
 		 System.out.println("error message displayed successfully. Test Failed");
 
 	 }
-	 
+	 driver.quit();
 	 }
 	 
 }
