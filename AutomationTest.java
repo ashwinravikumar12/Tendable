@@ -4,9 +4,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.WebDriver;
+
 import java.time.Duration;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -89,7 +93,7 @@ public class WebAutomation {
 		String email ="(//input[@id='form-input-email'])[1]";
 		String jobRole = "(//select[@id='form-input-jobRole'])[1]";
 		String radioButton="//div[@class='fixed right-0 top-1/4 z-50 px-3.5 xl:px-7 py-3 bg-transparent flex flex-col space-y-3']";
-		String submit ="(//button[@data-loading-text='Loading...'][normalize-space()='Submit'])[1]";
+		String submit ="//form[@id='contactMarketingPipedrive-163701']//label[contains(text(),'I Agree')]";
 		String errorMsg="/html[1]/body[1]/div[5]/div[1]/div[1]/div[1]/div[1]/form[1]/div[1]";
 		
 	   driver.findElement(By.xpath(marketContact)).click();
@@ -109,7 +113,33 @@ public class WebAutomation {
       WebDriverWait wait1 = new WebDriverWait(driver,Duration.ofSeconds(10));
       WebElement radButton = wait1.until(ExpectedConditions.elementToBeClickable(By.xpath(radioButton)));
       
-      Actions actions = new Actions(driver);
+      Point elementLocation = radButton.getLocation();
+     
+     
+      int maxAttempts = 3; 
+      long retryInterval = 1000; 
+      
+      for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+    	    try {
+    	    	 Actions actions = new Actions(driver);
+    	         
+    	         actions.doubleClick(radButton).perform();
+    	        break;  // If the click is successful, exit the loop
+    	    } catch (ElementNotInteractableException e) {
+    	        if (attempt < maxAttempts) {
+    	            try {
+    	                Thread.sleep(retryInterval);
+    	            } catch (InterruptedException sleepException) {
+    	                Thread.currentThread().interrupt();
+    	            }
+    	        } else {
+    	            throw new RuntimeException("Element not interactable after max attempts.");
+    	        }
+    	    }
+    	}
+      
+      
+     Actions actions = new Actions(driver);
       
       actions.doubleClick(radButton).perform();
       
